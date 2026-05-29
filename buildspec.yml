@@ -6,10 +6,19 @@ env:
     SECRET_PASSWORD: "pipeline-docker-auth:password"
 
 phases:
+  pre_build:
+    commands:
+      - echo "Logging in to Docker registry"
+      - echo "$SECRET_PASSWORD" | docker login -u "$SECRET_USERNAME" --password-stdin
+
   build:
     commands:
-      - echo "Hello World from Buildspec.yml"
-      - echo "$SECRET_USERNAME"
+      - echo "Building Doker image..."
+      - docker build -t mustafa1704/arsenal-db:latest .
+  post_build:
+    commands:
+      - echo "Pushing Docker Image..."
+      - docker push mustafa1704/arsenal-db:latest
 
 artifacts:
   files:
